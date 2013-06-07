@@ -10,16 +10,28 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) 
 {
     Point* points = new Point[201];
-    DiscreteFunction* function = new DiscreteFunction(points, 201);
+    Point* points2 = new Point[201];
+
     for (int i = -100; i < 101; i++) {
         points[i + 100].setX(i);
         points[i + 100].setY(0.05 * i * i);
+
+        points2[i + 100].setX(i);
+        points2[i + 100].setY(0.05 * i * i * i);
     }
 
-    this->gl = new OpenGlWidget(this, function);
+    DiscreteFunction* functions = new DiscreteFunction[2];
+    functions[0].setPoints(points);
+    functions[0].setPointsCount(201);
+    functions[1].setPoints(points2);
+    functions[1].setPointsCount(201);
+
+    this->gl = new OpenGlWidget(this, functions, 2);
     this->resize(800, 640);
+
     this->setWindowTitle("KGM Project 80307");
     this->setCentralWidget(gl);
+
     QMenuBar* menubar = menuBar();
     QMenu* file = menubar->addMenu("&File");
     createMenuItem("Reset", NULL, "Ctrl+N", file, SLOT(resetSlot()), gl);

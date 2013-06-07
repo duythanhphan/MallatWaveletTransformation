@@ -1,6 +1,8 @@
 #include <Point.h>
 #include <DiscreteFunction.h>
 
+DiscreteFunction::DiscreteFunction() {
+}
 
 DiscreteFunction::DiscreteFunction(Point* _points, int _count) {
     points = _points;
@@ -21,4 +23,12 @@ Point* DiscreteFunction::getPoints() {
 
 Point DiscreteFunction::getPoint(int index) {
     return points[index];
+}
+
+void DiscreteFunction::setPoints(Point* _points) {
+    points = _points;
+}
+
+void DiscreteFunction::setPointsCount(int _count) {
+    count = _count;
 }

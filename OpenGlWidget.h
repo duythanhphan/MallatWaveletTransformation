@@ -34,7 +34,8 @@ private:
     float angelx;
     float angely;
     int pointsInSurface;
-    DiscreteFunction* function;
+    DiscreteFunction* functions;
+    int functionsCount;
     float translationX;
     float translationY;
     // tmp variables
@@ -45,7 +46,9 @@ private:
     int pressedButton;
 
 public:
-	OpenGlWidget(QWidget *parent=0, DiscreteFunction* _function=0);
+	OpenGlWidget(QWidget *parent=0,
+      DiscreteFunction* _function=0,
+      int _functinsCount = 0);
   ~OpenGlWidget();
 	
 protected:
@@ -58,7 +61,8 @@ protected:
   void mouseMoveEvent( QMouseEvent *e );
   void drawCoordinateSystem();
   void drawTriangles(Point* points, int count, float lineWidth, float red, float green, float blue);
-  void drawFunction();
+  void drawFunctions();
+  void drawFunction(DiscreteFunction& function);
   void drawCoordinateAxis(float x, float y, float red, float green, float blue);
   void getPointIndex(int x, int y);
   void initForGluProjection(double* model, double* proj, int* view);

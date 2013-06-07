@@ -10,11 +10,10 @@
 using namespace std;
 
 // initialize variables
-OpenGlWidget::OpenGlWidget(QWidget *parent, DiscreteFunction* _function) : QGLWidget(parent)
-{
-    //controlPoints = new Point[(MAX_CONTROL_POINTS + 1) * (MAX_CONTROL_POINTS + 2) / 2];
-    //surfacePoints = new Point[MAX_SURFACE_POINTS];
-    function = _function;
+OpenGlWidget::OpenGlWidget(QWidget *parent, DiscreteFunction* _functions, int _functinsCount) : QGLWidget(parent) {
+    functions = _functions;
+    functionsCount = _functinsCount;
+
     initVariables();
     setMouseTracking(false);
     pressedButton = Qt::NoButton;
@@ -64,25 +63,26 @@ void OpenGlWidget::paintGL()
     glTranslatef(translationX, translationY, BASE_ZOOM * zoom);
 
     drawCoordinateSystem();
-    drawFunction();
+    drawFunctions();
 }
 
-void OpenGlWidget::drawFunction() 
-{
+void OpenGlWidget::drawFunctions() {
+    for(int i = 0; i < functionsCount; i++) {
+      std::cout << "Foo: " << i << std::endl;
+      drawFunction(functions[i]);
+    }
+}
+
+void OpenGlWidget::drawFunction(DiscreteFunction& function) {
     glColor3f (1.0f, 1.0f, 1.0f);
     glBegin (GL_LINE_STRIP);
 
-    if (function == NULL) {
-        for (int i = -100; i < 101; i ++) {
-          glVertex2f ( 0.1 * i, 0.01 * i * i );
-        }
-    } else {
-        for (int i = 0; i < function->getCount(); i++) {
-            glVertex2f(function->getPoint(i).getX(), function->getPoint(i).getY());
-        }
+
+    for (int i = 0; i < function.getCount(); i++) {
+        glVertex2f(function.getPoint(i).getX(), function.getPoint(i).getY());
     }
-    glEnd ();
     
+    glEnd ();
 }
 
 // handles key board events
