@@ -6,9 +6,12 @@
 #include <OpenGlWidget.h>
 #include <MainWindow.h>
 #include <DiscreteFunction.h>
+#include <MallatWaveletTransformation.h>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) 
 {
+    MallatWaveletTransformation mallatWaveletTransformation;
+
     Point* points = new Point[201];
     Point* points2 = new Point[201];
 
@@ -26,7 +29,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     functions[1].setPoints(points2);
     functions[1].setPointsCount(201);
 
-    this->gl = new OpenGlWidget(this, functions, 2);
+    mallatWaveletTransformation.setOriginalFunction(&functions[1]);
+
+    this->gl = new OpenGlWidget(this, mallatWaveletTransformation.getFunctions(), 2);
     this->resize(800, 640);
 
     this->setWindowTitle("KGM Project 80307");
