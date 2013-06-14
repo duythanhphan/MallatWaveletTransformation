@@ -28,14 +28,13 @@ OpenGlWidget::~OpenGlWidget() {
 // pass some basic GL settings
 void OpenGlWidget::initializeGL()
 {
-    glShadeModel(GL_SMOOTH);
-
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glDisable ( GL_DEPTH_TEST );
-    
-    // enables anti-aliasing
-    glEnable ( GL_POINT_SMOOTH );
-    glHint (GL_POINT_SMOOTH_HINT, GL_NICEST);
+    glShadeModel(GL_SMOOTH);                                                       
+                                                                                   
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);                                          
+    glEnable ( GL_DEPTH_TEST );                                                    
+    // enables anti-aliasing                                                       
+    glEnable ( GL_POINT_SMOOTH );                                                  
+    glHint (GL_POINT_SMOOTH_HINT, GL_NICEST);                                      
     glFlush ();
 }
 
@@ -47,7 +46,7 @@ void OpenGlWidget::resizeGL(int width, int height)
     glViewport(0, 0, (GLint)width, (GLint)height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 10000.0f);
+    gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100000.0f);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -56,7 +55,7 @@ void OpenGlWidget::resizeGL(int width, int height)
 // handles repaint events
 void OpenGlWidget::paintGL()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);  
     glLoadIdentity();
 
@@ -68,18 +67,25 @@ void OpenGlWidget::paintGL()
 
 void OpenGlWidget::drawFunctions() {
     for(int i = 0; i < functionsCount; i++) {
-      std::cout << "Foo: " << i << std::endl;
       drawFunction(functions[i]);
     }
 }
 
-void OpenGlWidget::drawFunction(DiscreteFunction& function) {
+void OpenGlWidget::drawFunction(DiscreteFunction& function, float red, float green, float blue) {
+    glEnable ( GL_LINE_SMOOTH );                                                
+
+    glEnable (GL_BLEND);                                                        
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);                         
+
+    glHint (GL_LINE_SMOOTH_HINT, GL_NICEST);                                    
+    glFlush();                                                                  
     glColor3f (1.0f, 1.0f, 1.0f);
+    glLineWidth ( 2 );
+
     glBegin (GL_LINE_STRIP);
 
-
     for (int i = 0; i < function.getCount(); i++) {
-        glVertex2f(function.getPoint(i).getX(), function.getPoint(i).getY());
+        glVertex2f(10 * function.getPoint(i).getX(), 10 * function.getPoint(i).getY());
     }
     
     glEnd ();
@@ -128,8 +134,8 @@ void OpenGlWidget::mouseMoveEvent( QMouseEvent * e )
             int dy = newy - curry;
             currx = newx;
             curry = newy;
-            translationX += TRANSLATION_FACTOR * dx;
-            translationY -= TRANSLATION_FACTOR * dy;
+            translationX += (zoom / 5) * TRANSLATION_FACTOR * dx;
+            translationY -= (zoom / 5) * TRANSLATION_FACTOR * dy;
         }
         //else if(pressedButton == Qt::RightButton) {
             //// we want to move a point -> compute the new coordinates
@@ -165,8 +171,8 @@ void OpenGlWidget::wheelEvent( QWheelEvent * e )
 // zooms the scene
 void OpenGlWidget::zoomin() 
 {
-    if(zoom > MIN_ZOOM) {
-        zoom -= 2;
+    if(zoom / 2 > MIN_ZOOM) {
+        zoom /= 2;
         updateGL();
     }
 }
@@ -174,8 +180,8 @@ void OpenGlWidget::zoomin()
 // zooms out the scene
 void OpenGlWidget::zoomout() 
 {
-    if(zoom < MAX_ZOOM) {
-        zoom += zoom_step;
+    if(zoom * 1.5 < MAX_ZOOM) {
+        zoom *= 1.5;
         updateGL();
     }
 }

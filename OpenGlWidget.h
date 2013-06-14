@@ -16,8 +16,8 @@
 #define MIN_PATHES         3
 #define MAX_SURFACE_POINTS 1024
 #define COORD_SYSTEM_WIDTH 4
-#define COORD_AXIS_LEN     16
-#define MAX_ZOOM           24
+#define COORD_AXIS_LEN     1000
+#define MAX_ZOOM           8000
 #define MIN_ZOOM           2
 #define TRANSLATION_FACTOR 0.1
 
@@ -55,31 +55,31 @@ protected:
 	void initializeGL();
 	void resizeGL( int width, int height );
 	void paintGL();
-  void keyPressEvent( QKeyEvent *e );
-  void wheelEvent ( QWheelEvent * e );
-  void mousePressEvent( QMouseEvent *e );
-  void mouseMoveEvent( QMouseEvent *e );
-  void drawCoordinateSystem();
-  void drawTriangles(Point* points, int count, float lineWidth, float red, float green, float blue);
-  void drawFunctions();
-  void drawFunction(DiscreteFunction& function);
-  void drawCoordinateAxis(float x, float y, float red, float green, float blue);
-  void getPointIndex(int x, int y);
-  void initForGluProjection(double* model, double* proj, int* view);
-  void initVariables();
-  double getDist(Point point, double* model, double* proj, int* view, double* tmp, int x, int y);
+    void keyPressEvent( QKeyEvent *e );
+    void wheelEvent ( QWheelEvent * e );
+    void mousePressEvent( QMouseEvent *e );
+    void mouseMoveEvent( QMouseEvent *e );
+    void drawCoordinateSystem();
+    void drawTriangles(Point* points, int count, float lineWidth, float red, float green, float blue);
+    void drawFunctions();
+    void drawFunction(DiscreteFunction& function, float red = 1.0f, float green = 1.0f, float blue = 1.0f);
+    void drawCoordinateAxis(float x, float y, float red, float green, float blue);
+    void getPointIndex(int x, int y);
+    void initForGluProjection(double* model, double* proj, int* view);
+    void initVariables();
+    double getDist(Point point, double* model, double* proj, int* view, double* tmp, int x, int y);
 
 
 protected slots:    
-  void zoomin();
-  void zoomout();
-  void changeShowCoordinateSystem();
-  void changeShowPoints();
-  void addControlPoints();
-  void removeControlPoints();
-  void addPatches();
-  void removePatches();
-  void resetSlot();
+    void zoomin();
+    void zoomout();
+    void changeShowCoordinateSystem();
+    void changeShowPoints();
+    void addControlPoints();
+    void removeControlPoints();
+    void addPatches();
+    void removePatches();
+    void resetSlot();
 };
 
 #endif

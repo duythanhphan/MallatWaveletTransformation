@@ -6,35 +6,40 @@
 #include <OpenGlWidget.h>
 #include <MainWindow.h>
 #include <DiscreteFunction.h>
-#include <MallatWaveletTransformation.h>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) 
 {
     MallatWaveletTransformation mallatWaveletTransformation;
 
-    Point* points = new Point[201];
-    Point* points2 = new Point[201];
+    Point* points = new Point[2048];
+    Point* points2 = new Point[2048];
+    int sign = -1;
 
-    for (int i = -100; i < 101; i++) {
-        points[i + 100].setX(i);
-        points[i + 100].setY(0.05 * i * i);
+    for (int i = 0; i < 2048; i+=4) {
+        if (i % 4 == 0) {
+            sign *= -1;
+        }
+        
+        points2[i].setX(i);
+        points2[i].setY(0);
 
-        points2[i + 100].setX(i);
-        points2[i + 100].setY(0.05 * i * i * i);
+        points2[i + 1].setX(i + 1);
+        points2[i + 1].setY(sign * 100);
+
+        points2[i + 2].setX(i + 2);
+        points2[i + 2].setY(sign * 200);
+
+        points2[i + 3].setX(i + 3);
+        points2[i + 3].setY(sign * 100);
+
     }
 
-    DiscreteFunction* functions = new DiscreteFunction[2];
-    functions[0].setPoints(points);
-    functions[0].setPointsCount(201);
-    functions[1].setPoints(points2);
-    functions[1].setPointsCount(201);
+    mallatWaveletTransformation.setOriginalFunction(new DiscreteFunction(points2, 2048));
 
-    mallatWaveletTransformation.setOriginalFunction(&functions[1]);
-
-    this->gl = new OpenGlWidget(this, mallatWaveletTransformation.getFunctions(), 2);
+    this->gl = new OpenGlWidget(this, &mallatWaveletTransformation.getFunctions()[1], 1);
     this->resize(800, 640);
 
-    this->setWindowTitle("KGM Project 80307");
+    this->setWindowTitle("Project 24056");
     this->setCentralWidget(gl);
 
     QMenuBar* menubar = menuBar();

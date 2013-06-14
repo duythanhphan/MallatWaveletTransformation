@@ -8,6 +8,8 @@
 #include <qgl.h>
 #include <OpenGlWidget.h>
 
+#include <MallatWaveletTransformation.h>
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
