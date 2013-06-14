@@ -36,10 +36,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     mallatWaveletTransformation.setOriginalFunction(new DiscreteFunction(points2, 2048));
 
-    this->gl = new OpenGlWidget(this, &mallatWaveletTransformation.getFunctions()[1], 1);
+    this->gl = new OpenGlWidget(this, mallatWaveletTransformation.getFunctions(), 2);
     this->resize(800, 640);
 
-    this->setWindowTitle("Project 24056");
+    this->setWindowTitle("Mallat wavelet transformation");
     this->setCentralWidget(gl);
 
     QMenuBar* menubar = menuBar();

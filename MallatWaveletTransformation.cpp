@@ -19,6 +19,12 @@ DiscreteFunction* MallatWaveletTransformation::getOriginalFunction() {
     return originalFunction;
 }
 
+void MallatWaveletTransformation::forwardTransformation() {
+}
+
+void MallatWaveletTransformation::reverseTransformation() {
+}
+
 DiscreteFunction* MallatWaveletTransformation::getTransformedFunction() {
     if (originalFunction == NULL) {
         return NULL;
@@ -96,3 +102,12 @@ DiscreteFunction* MallatWaveletTransformation::getFunctions() {
 
     return functions;
 }
+
+DiscreteFunction* MallatWaveletTransformation::getFunctionsDifferance() {
+}
+
+DiscreteFunction* MallatWaveletTransformation::getCalculatedOriginalFunction() {
+
+}
+
+

@@ -14,21 +14,30 @@ class MallatWaveletTransformation
 private:
     DiscreteFunction* originalFunction; 
     DiscreteFunction* cachedTransformedFunction;
+    DiscreteFunction* calculatedOriginalFunction;
+    DiscreteFunction* functionsDifferance;
 
     double basis[2][2];
     double SQRT2;
 
+    void forwardTransformation();
+
+    void reverseTransformation();
+
 public:
     MallatWaveletTransformation(DiscreteFunction* function = NULL);
+
+    void setOriginalFunction(DiscreteFunction* function);
 
     DiscreteFunction* getOriginalFunction();
 
     DiscreteFunction* getTransformedFunction();
 
-    void setOriginalFunction(DiscreteFunction* function);
-
     DiscreteFunction* getFunctions();
 
+    DiscreteFunction* getFunctionsDifferance();
+
+    DiscreteFunction* getCalculatedOriginalFunction();
 };
 
 #endif

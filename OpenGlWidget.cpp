@@ -66,26 +66,32 @@ void OpenGlWidget::paintGL()
 }
 
 void OpenGlWidget::drawFunctions() {
+    float colors[][3] = {
+        {0.0f, 1.0f, 1.0f},
+        {1.0f, 1.0f, 0.25f},
+        {0.25f, 1.0f, 0.25f},
+        {1.0f, 1.0f, 0.0f}};
     for(int i = 0; i < functionsCount; i++) {
-      drawFunction(functions[i]);
+      int colorIndex = i & 11;
+      drawFunction(functions[i], colors[colorIndex][0], colors[colorIndex][1], colors[colorIndex][2]);
     }
 }
 
 void OpenGlWidget::drawFunction(DiscreteFunction& function, float red, float green, float blue) {
-    glEnable ( GL_LINE_SMOOTH );                                                
+    glEnable( GL_LINE_SMOOTH );                                                
 
-    glEnable (GL_BLEND);                                                        
+    glEnable(GL_BLEND);                                                        
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);                         
 
-    glHint (GL_LINE_SMOOTH_HINT, GL_NICEST);                                    
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);                                    
     glFlush();                                                                  
-    glColor3f (1.0f, 1.0f, 1.0f);
+    glColor3f(red, green, blue);
     glLineWidth ( 2 );
 
-    glBegin (GL_LINE_STRIP);
+    glBegin(GL_LINE_STRIP);
 
     for (int i = 0; i < function.getCount(); i++) {
-        glVertex2f(10 * function.getPoint(i).getX(), 10 * function.getPoint(i).getY());
+        glVertex2f(function.getPoint(i).getX(), function.getPoint(i).getY());
     }
     
     glEnd ();
@@ -110,12 +116,7 @@ void OpenGlWidget::mousePressEvent( QMouseEvent * e )
         curry = e->y();
         e->accept();
         pressedButton = Qt::LeftButton;
-    }
-    //else if(e->button() == Qt::RightButton) {
-        //getPointIndex(e->x(), e-> y());
-        //pressedButton = Qt::RightButton;
-    //}
-    else {
+    } else {
         currx = -1;
         curry = -1;
         pressedButton = Qt::NoButton;
@@ -134,21 +135,11 @@ void OpenGlWidget::mouseMoveEvent( QMouseEvent * e )
             int dy = newy - curry;
             currx = newx;
             curry = newy;
-            translationX += (zoom / 5) * TRANSLATION_FACTOR * dx;
-            translationY -= (zoom / 5) * TRANSLATION_FACTOR * dy;
+            int zoomFactor = (zoom / 5 > 0) ? zoom / 5 : 1;
+
+            translationX += zoomFactor * TRANSLATION_FACTOR * dx;
+            translationY -= zoomFactor * TRANSLATION_FACTOR * dy;
         }
-        //else if(pressedButton == Qt::RightButton) {
-            //// we want to move a point -> compute the new coordinates
-            //double model[16];
-            //double proj[16];
-            //int view[4];
-            //initForGluProjection(model, proj, view);
-            //newy = view[3] - newy;
-            //double x, y, z;
-            ////gluUnProject ( newx, newy, tmpZ, model, proj, view, &x, &y, &z );
-            //controlPoints[index].setCoordinates(x, y, z);
-            //initSurfacePoints();
-        //} 
     }
 
     e->accept();
