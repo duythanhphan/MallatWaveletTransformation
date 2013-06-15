@@ -1,50 +1,23 @@
-#include <OpenGlWidget.h>
 #include <QKeyEvent>
 #include <QMenuBar>
 #include <QAction>
-#include <qapplication.h>
-#include <OpenGlWidget.h>
+#include <QFileDialog>
+
+#include <iostream>
+#include <fstream>
+
 #include <MainWindow.h>
 #include <DiscreteFunction.h>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) 
 {
-    MallatWaveletTransformation mallatWaveletTransformation;
-
-    Point* points = new Point[2048];
-    Point* points2 = new Point[2048];
-    int sign = -1;
-
-    for (int i = 0; i < 2048; i+=4) {
-        if (i % 4 == 0) {
-            sign *= -1;
-        }
-        
-        points2[i].setX(i);
-        points2[i].setY(0);
-
-        points2[i + 1].setX(i + 1);
-        points2[i + 1].setY(i * sign * 1);
-
-        points2[i + 2].setX(i + 2);
-        points2[i + 2].setY(i * sign * 2);
-
-        points2[i + 3].setX(i + 3);
-        points2[i + 3].setY(i * sign * 1);
-
-    }
-
-    mallatWaveletTransformation.setOriginalFunction(new DiscreteFunction(points2, 2048));
-
-    mallatWaveletTransformation.getFunctionsDifferance();
-
     int functionsCount = 4;
     showFunction = new int[functionsCount];
     for (int i = 0; i < functionsCount; i++) {
         showFunction[i] = 1;
     }
 
-    this->gl = new OpenGlWidget(this, mallatWaveletTransformation.getFunctions(), functionsCount);
+    this->gl = new OpenGlWidget(this);
     this->gl->setVisible(showFunction, functionsCount);
 
     this->resize(800, 640);
@@ -54,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     QMenuBar* menubar = menuBar();
     QMenu* file = menubar->addMenu("&File");
+
+    createMenuItem("Open file", "Ctrl+O", file, SLOT(importSlot()), this);
     createMenuItem("Reset view", "Ctrl+R", file, SLOT(resetSlot()), gl);
     file->addSeparator();
     createMenuItem("Exit", "Esc", file, SLOT(closeSlot()), this);
@@ -87,6 +62,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
             view,
             SLOT(changeFunctionDifferenceVisibility()),
             gl);
+
+    connect(this,
+            SIGNAL(functionsChanged(DiscreteFunction*, int)),
+            gl,
+            SLOT(updateFunctions(DiscreteFunction*, int)));
+
+    //emit functionsChanged(mallatWaveletTransformation.getFunctions(), functionsCount);
 }
 
 void MainWindow::createMenuItem(QString label, QString shortCut, QWidget *addTo, const char * func, QWidget* signalTo) 
@@ -95,6 +77,49 @@ void MainWindow::createMenuItem(QString label, QString shortCut, QWidget *addTo,
     tmp->setShortcut(shortCut);
     connect(tmp, SIGNAL(triggered()), signalTo, func);
     addTo->addAction(tmp);
+}
+
+void MainWindow::importSlot()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,
+            tr("Open File"),
+            "",
+            tr("Files (*.*)"));
+    std::cout << fileName.toStdString() << std::endl;
+
+    //QFile file(fileName);
+
+    //QTextStream in(&file);
+
+    std::ifstream in(fileName.toStdString().c_str());
+
+    int pointsCount;
+
+    in >> pointsCount;
+
+    std::cout << pointsCount << std::endl;
+
+    Point* points = new Point[pointsCount];
+
+    for (int i = 0; i < pointsCount; i++) {
+        points[i].setX(i);
+
+        double tmp;
+        in >> tmp;
+
+        points[i].setY(tmp);
+
+        std::cout << points[i].getX() << " " << points[i].getY() << std::endl;
+    }
+
+    DiscreteFunction* originalFuntion = new DiscreteFunction(points, pointsCount);
+
+    MallatWaveletTransformation mallatWaveletTransformation = 
+        MallatWaveletTransformation();
+
+    mallatWaveletTransformation.setOriginalFunction(originalFuntion);
+
+    emit functionsChanged(mallatWaveletTransformation.getFunctions(), 4);
 }
 
 void MainWindow::closeSlot() 

@@ -18,7 +18,7 @@
 #define COORD_SYSTEM_WIDTH 4
 #define COORD_AXIS_LEN     1000
 #define MAX_ZOOM           8000
-#define MIN_ZOOM           2
+#define MIN_ZOOM           1e-1
 #define TRANSLATION_FACTOR 0.1
 
 class OpenGlWidget : public QGLWidget
@@ -27,7 +27,7 @@ class OpenGlWidget : public QGLWidget
 
 private:
     bool showCoordinateSystem;
-    int zoom;
+    double zoom;
     int zoom_step;
     float angelx;
     float angely;
@@ -44,9 +44,7 @@ private:
     int *showFunction;
 
 public:
-	OpenGlWidget(QWidget *parent=0,
-      DiscreteFunction* _function=0,
-      int _functinsCount = 0);
+	OpenGlWidget(QWidget *parent=0);
   ~OpenGlWidget();
   void setVisible(int* show, int length);
 	
@@ -78,6 +76,7 @@ protected slots:
     void changeCalculatedFunctionVisibility();
     void changeFunctionDifferenceVisibility();
     void resetSlot();
+    void updateFunctions(DiscreteFunction* functions, int functionsCount);
 };
 
 #endif

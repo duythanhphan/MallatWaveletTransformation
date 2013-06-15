@@ -10,9 +10,9 @@
 using namespace std;
 
 // initialize variables
-OpenGlWidget::OpenGlWidget(QWidget *parent, DiscreteFunction* _functions, int _functinsCount) : QGLWidget(parent) {
-    functions = _functions;
-    functionsCount = _functinsCount;
+OpenGlWidget::OpenGlWidget(QWidget *parent) : QGLWidget(parent) {
+    functions = NULL;
+    functionsCount = 0;
 
     initVariables();
     setMouseTracking(false);
@@ -46,7 +46,10 @@ void OpenGlWidget::resizeGL(int width, int height)
     glViewport(0, 0, (GLint)width, (GLint)height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45.0f, (GLfloat)width / (GLfloat)height, 0.1f, 100000.0f);
+    gluPerspective((GLdouble)90.0,
+        (GLfloat)width / (GLfloat)height,
+        (GLdouble)1e-1,
+        (GLdouble)1e6);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -137,7 +140,7 @@ void OpenGlWidget::mouseMoveEvent( QMouseEvent * e )
             int dy = newy - curry;
             currx = newx;
             curry = newy;
-            int zoomFactor = (zoom / 5 > 0) ? zoom / 5 : 1;
+            int zoomFactor = (zoom / 5 >= 1) ? zoom / 5 : 1;
 
             translationX += zoomFactor * TRANSLATION_FACTOR * dx;
             translationY -= zoomFactor * TRANSLATION_FACTOR * dy;
@@ -272,5 +275,14 @@ void OpenGlWidget::changeCalculatedFunctionVisibility() {
 
 void OpenGlWidget::changeFunctionDifferenceVisibility() {
     showFunction[3] = !showFunction[3];
+    updateGL();
+}
+
+
+void OpenGlWidget::updateFunctions(DiscreteFunction* functions, int functionsCount) {
+    std::cout << "Updating functions \n\n\n\n";
+    this->functions = functions;
+    this->functionsCount = functionsCount;
+
     updateGL();
 }

@@ -22,8 +22,12 @@ private:
 public:
     MainWindow(QWidget *parent=0);
 
+signals:
+    void functionsChanged(DiscreteFunction* functions, int functionsCount);
+
 protected slots:
     void closeSlot();
+    void importSlot();
 };
 
 #endif
