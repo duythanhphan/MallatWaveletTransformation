@@ -27,13 +27,10 @@ class OpenGlWidget : public QGLWidget
 
 private:
     bool showCoordinateSystem;
-    bool showPoints;
     int zoom;
-    int patches;
     int zoom_step;
     float angelx;
     float angely;
-    int pointsInSurface;
     DiscreteFunction* functions;
     int functionsCount;
     float translationX;
@@ -44,17 +41,19 @@ private:
     int index;
     double tmpZ;
     int pressedButton;
+    int *showFunction;
 
 public:
 	OpenGlWidget(QWidget *parent=0,
       DiscreteFunction* _function=0,
       int _functinsCount = 0);
   ~OpenGlWidget();
+  void setVisible(int* show, int length);
 	
 protected:
-	void initializeGL();
-	void resizeGL( int width, int height );
-	void paintGL();
+    void initializeGL();
+    void resizeGL( int width, int height );
+    void paintGL();
     void keyPressEvent( QKeyEvent *e );
     void wheelEvent ( QWheelEvent * e );
     void mousePressEvent( QMouseEvent *e );
@@ -74,11 +73,10 @@ protected slots:
     void zoomin();
     void zoomout();
     void changeShowCoordinateSystem();
-    void changeShowPoints();
-    void addControlPoints();
-    void removeControlPoints();
-    void addPatches();
-    void removePatches();
+    void changeFunctionVisibility();
+    void changeCoeficientsFunctionVisibility();
+    void changeCalculatedFunctionVisibility();
+    void changeFunctionDifferenceVisibility();
     void resetSlot();
 };
 

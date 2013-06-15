@@ -24,6 +24,8 @@ private:
 
     void reverseTransformation();
 
+    void calculateDifferance();
+
 public:
     MallatWaveletTransformation(DiscreteFunction* function = NULL);
 

@@ -16,7 +16,8 @@ class MainWindow : public QMainWindow
 
 private:
     OpenGlWidget* gl;
-    void createMenuItem(QString label, QString iconLocation, QString shortCut, QWidget *addTo, const char * func, QWidget* signalTo);
+    void createMenuItem(QString label, QString shortCut, QWidget *addTo, const char * func, QWidget* signalTo);
+    int* showFunction;
 
 public:
     MainWindow(QWidget *parent=0);

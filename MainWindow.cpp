@@ -24,19 +24,29 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
         points2[i].setY(0);
 
         points2[i + 1].setX(i + 1);
-        points2[i + 1].setY(sign * 100);
+        points2[i + 1].setY(i * sign * 1);
 
         points2[i + 2].setX(i + 2);
-        points2[i + 2].setY(sign * 200);
+        points2[i + 2].setY(i * sign * 2);
 
         points2[i + 3].setX(i + 3);
-        points2[i + 3].setY(sign * 100);
+        points2[i + 3].setY(i * sign * 1);
 
     }
 
     mallatWaveletTransformation.setOriginalFunction(new DiscreteFunction(points2, 2048));
 
-    this->gl = new OpenGlWidget(this, mallatWaveletTransformation.getFunctions(), 2);
+    mallatWaveletTransformation.getFunctionsDifferance();
+
+    int functionsCount = 4;
+    showFunction = new int[functionsCount];
+    for (int i = 0; i < functionsCount; i++) {
+        showFunction[i] = 1;
+    }
+
+    this->gl = new OpenGlWidget(this, mallatWaveletTransformation.getFunctions(), functionsCount);
+    this->gl->setVisible(showFunction, functionsCount);
+
     this->resize(800, 640);
 
     this->setWindowTitle("Mallat wavelet transformation");
@@ -44,24 +54,42 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     QMenuBar* menubar = menuBar();
     QMenu* file = menubar->addMenu("&File");
-    createMenuItem("Reset", NULL, "Ctrl+N", file, SLOT(resetSlot()), gl);
+    createMenuItem("Reset view", "Ctrl+R", file, SLOT(resetSlot()), gl);
     file->addSeparator();
-    createMenuItem("Exit", NULL, "Esc", file, SLOT(closeSlot()), this);
-    QMenu* edit = menubar->addMenu("&Edit");
-    createMenuItem("Zoom in", NULL, "Ctrl+C", edit, SLOT(zoomin()), gl);
-    createMenuItem("Zoom Out", NULL, "Ctrl+D", edit, SLOT(zoomout()), gl);
-    edit->addSeparator();
-    createMenuItem("Increase the number of control points", NULL, "Ctrl+A", edit, SLOT(addControlPoints()), gl);
-    createMenuItem("Decrease the number of control points", NULL, "Ctrl+W", edit, SLOT(removeControlPoints()), gl);
-    edit->addSeparator();
-    createMenuItem("Increase the number of patches", NULL, "Ctrl+R", edit, SLOT(addPatches()), gl);
-    createMenuItem("Decrease the number of patches", NULL, "Ctrl+T", edit, SLOT(removePatches()), gl);
+    createMenuItem("Exit", "Esc", file, SLOT(closeSlot()), this);
     QMenu* view = menubar->addMenu("&View");
-    createMenuItem("Change coordinate system visibility", NULL, "Ctrl+S", view, SLOT(changeShowCoordinateSystem()), gl);
-    createMenuItem("Change points visibility", NULL, "Ctrl+P", view, SLOT(changeShowPoints()), gl);
+    createMenuItem("Zoom in", "Ctrl++", view, SLOT(zoomin()), gl);
+    createMenuItem("Zoom Out", "Ctrl+-", view, SLOT(zoomout()), gl);
+    view->addSeparator();
+
+    createMenuItem("Change coordinate system visibility",
+            "Ctrl+S",
+            view,
+            SLOT(changeShowCoordinateSystem()),
+            gl);
+    createMenuItem("Change function visibility",
+            "Ctrl+F",
+            view,
+            SLOT(changeFunctionVisibility()),
+            gl);
+    createMenuItem("Change coeficients visibility",
+            "Ctrl+C",
+            view,
+            SLOT(changeCoeficientsFunctionVisibility()),
+            gl);
+    createMenuItem("Change calculated function visibility",
+            "Ctrl+A",
+            view,
+            SLOT(changeCalculatedFunctionVisibility()),
+            gl);
+    createMenuItem("Change functions difference visibility",
+            "Ctrl+D",
+            view,
+            SLOT(changeFunctionDifferenceVisibility()),
+            gl);
 }
 
-void MainWindow::createMenuItem(QString label, QString iconLocation, QString shortCut, QWidget *addTo, const char * func, QWidget* signalTo) 
+void MainWindow::createMenuItem(QString label, QString shortCut, QWidget *addTo, const char * func, QWidget* signalTo) 
 {
     QAction* tmp = new QAction(label, this);
     tmp->setShortcut(shortCut);

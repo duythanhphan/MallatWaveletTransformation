@@ -70,10 +70,12 @@ void OpenGlWidget::drawFunctions() {
         {0.0f, 1.0f, 1.0f},
         {1.0f, 1.0f, 0.25f},
         {0.25f, 1.0f, 0.25f},
-        {1.0f, 1.0f, 0.0f}};
+        {0.0f, 1.0f, 0.0f}};
     for(int i = 0; i < functionsCount; i++) {
-      int colorIndex = i & 11;
-      drawFunction(functions[i], colors[colorIndex][0], colors[colorIndex][1], colors[colorIndex][2]);
+      int colorIndex = i & 3;
+      if (showFunction[i]) {
+          drawFunction(functions[i], colors[colorIndex][0], colors[colorIndex][1], colors[colorIndex][2]);
+      }
     }
 }
 
@@ -184,32 +186,6 @@ void OpenGlWidget::changeShowCoordinateSystem()
     updateGL();
 }
 
-// makes control points visibility be !showPoints
-void OpenGlWidget::changeShowPoints() 
-{
-    showPoints = !showPoints;
-    updateGL();
-}
-
-// adds control points and reinitialize them
-void OpenGlWidget::addControlPoints() 
-{
-}
-
-// removes control points and reinitialize them
-void OpenGlWidget::removeControlPoints()
-{
-}
-
-// adds patches and recomputes the surface
-void OpenGlWidget::addPatches() 
-{
-}
-
-// removes patches and recomputes the surface
-void OpenGlWidget::removePatches()
-{
-}
 
 // resets the scene
 void OpenGlWidget::resetSlot()
@@ -229,71 +205,6 @@ void OpenGlWidget::drawCoordinateSystem()
 
     drawCoordinateAxis(100* COORD_AXIS_LEN, 0.0, 1.0, 0.0, 0.0);
     drawCoordinateAxis(0.0, 100 * COORD_AXIS_LEN, 0.0, 1.0, 0.0);
-}
-
-// given a set of points draws triangles
-void OpenGlWidget::drawTriangles(Point* points, int count, float lineWidth, float red, float green, float blue) 
-{
-    //int i, j;
-    //int k, l, m;
-    //int curr = 0;
-    //int n = (count + 1) * (count + 2) / 2;
-
-    //glEnable ( GL_LINE_SMOOTH );
-
-    //glEnable (GL_BLEND);
-    //glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    //glHint (GL_LINE_SMOOTH_HINT, GL_NICEST);
-    //glFlush();
-    //glColor3f ( red, green, blue);
-    //glLineWidth ( lineWidth );
-    //// make it clearer
-    //for (i = 0; i < count; ++i) {
-        //for (j = 0; j <= i; ++j, ++curr) {
-            //k = curr; l = curr+i+1; m = curr+i+2;
-            //glBegin ( GL_LINE_LOOP );
-                //glVertex3d ( points[k].getX(), points[k].getY(), points[k].getZ() );
-                //glVertex3d ( points[l].getX(), points[l].getY(), points[l].getZ() );
-                //glVertex3d ( points[m].getX(), points[m].getY(), points[m].getZ() );
-            //glEnd ();           
-        //}
-    //}
-
-    //glColor3f ( red, green, blue );
-    //glPointSize ( lineWidth * 5 );
-    //glBegin ( GL_POINTS );
-    //for (i = 0; i < n; i++) {
-        //glVertex3d ( points[i].getX(), points[i].getY(), points[i].getZ() );
-    //}
-    //glEnd ();
-}
-
-// finds the point that is closes to the position where the click event occured
-void OpenGlWidget::getPointIndex (int x, int y) {
-    //double model[16];
-    //double proj[16];
-    //int view[4];
-    //int i;
-    //int n = (points + 1) * (points + 2) / 2;
-    //double min = -1, dist;
-    //double tmp[3];
-    
-    //initForGluProjection(model, proj, view);
-    //y = view[3] - y;
-
-    //min = getDist(controlPoints[0], model, proj, view, tmp, x, y);
-    //tmpZ = tmp[2];
-    //index = 0;
-
-    //for (i = 1; i < n; ++i) {
-        //dist = getDist(controlPoints[i], model, proj, view, tmp, x, y);
-        //if ( dist < min || (dist == min && tmp[2] < tmpZ) ) {
-            //min = dist;
-            //index = i;
-            //tmpZ = tmp[2];
-        //}
-    //}
 }
 
 // draws only one of the coordinate axis
@@ -323,7 +234,7 @@ void OpenGlWidget::initVariables()
 {
     zoom_step = 2;
     zoom = 10;
-    showCoordinateSystem = showPoints = true;
+    showCoordinateSystem = true;
     translationX = 0.0f;
     translationY = 0.0f;
 }
@@ -335,3 +246,31 @@ double OpenGlWidget::getDist(Point point, double* model, double* proj, int* view
     return (tmp[0] - x) * (tmp[0] - x) + (tmp[1] - y) * (tmp[1] - y);
 }
 
+
+void OpenGlWidget::setVisible(int* show, int length) {
+    if (length < functionsCount) {
+        std::cerr << "Set visible invoked with too small show array\n";
+    }
+
+    this->showFunction = show;
+}
+
+void OpenGlWidget::changeFunctionVisibility() {
+    showFunction[0] = !showFunction[0];
+    updateGL();
+}
+
+void OpenGlWidget::changeCoeficientsFunctionVisibility() {
+    showFunction[1] = !showFunction[1];
+    updateGL();
+}
+
+void OpenGlWidget::changeCalculatedFunctionVisibility() {
+    showFunction[2] = !showFunction[2];
+    updateGL();
+}
+
+void OpenGlWidget::changeFunctionDifferenceVisibility() {
+    showFunction[3] = !showFunction[3];
+    updateGL();
+}
